@@ -1,0 +1,37 @@
+version: 2.1
+
+jobs:
+  verify:
+    machine:
+      image: ubuntu-2204:2023.04.2
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:4CUZaQPb6iKZaY1mJ3VvRs98n+5g1d8QCsGnUvUcZIY"
+      - checkout
+      - run: git submodule update --init --recursive
+      - run: make verify
+  tag:
+    machine:
+      image: ubuntu-2204:2023.04.2
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:4CUZaQPb6iKZaY1mJ3VvRs98n+5g1d8QCsGnUvUcZIY"
+      - checkout
+      - run: sh scripts/tag.sh
+
+workflows:
+  version: 2
+  verify_and_tag:
+    jobs:
+      - verify:
+          filters:
+            branches:
+              only: master
+      - tag:
+          requires:
+            - verify
+          filters:
+            branches:
+              only: master

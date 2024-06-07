@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      function addVariable() {
+        var div = document.createElement('div');
+        div.classList.add('c');
+        div.innerHTML = '<div class=\"f\"><label class=\"l\">Name:</label> <input name=\"name\" class=\"t\"></div><div class=\"f\"><label class=\"l\">Value:</label> <input name=\"value\" class=\"t\"></div>';
+        document.getElementById('fs').appendChild(div);
+      }
+    </script>
+    <style>
+      .f {
+        display: block;
+        float: left;
+      }
+      .c {
+        overflow: auto;
+        border-bottom: 1px solid #000;
+        padding-bottom: 5px;
+      }
+      .l, .t {
+        margin-right: 2px;
+      }
+      .t {
+        width: 150px;
+      }
+    </style>
+    <h1>Set variables</h1>
+    <form action='/save'>
+      <div id='fs'>
+        <div class='c'>
+          <div class='f'>
+            <label class='l'>Name:</label>
+            <input class='t' name='name'>
+          </div>
+          <div class='f'>
+            <label class='l'>Value:</label>
+            <input class='t' name='value'>
+          </div>
+        </div>
+      </div>
+      <div style='margin-top: 10px'>
+        <input type='button' value='Add another variable' onClick='addVariable()'>
+        <input type='submit' value='Submit'>
+      </div>
+    </form>
+  </body>
+</html>
