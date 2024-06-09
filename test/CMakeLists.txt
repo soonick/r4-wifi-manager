@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.27.4)
 project(r4-wifi-manager CXX)
 
 include_directories(../deps/ArduinoHashtable/src)
-include_directories(../deps/Httpino/include)
-include_directories(../deps/SimpleVector/src)
+include_directories(../deps/httpino/include)
 include_directories(../include)
 include_directories(../src)
+include_directories(external/SimpleVector/src)
 include_directories(external/catch/v2.13.10/include)
 include_directories(include)
 
@@ -33,5 +33,5 @@ add_executable(
   ${TESTING_SRCS}
 )
 
-add_library(httpino ../deps/Httpino/src/httpino.cpp)
+add_library(httpino ../deps/httpino/src/httpino.cpp)
 target_link_libraries(test PRIVATE httpino)
