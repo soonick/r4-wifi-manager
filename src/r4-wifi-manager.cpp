@@ -27,8 +27,8 @@ String R4WifiManager::startAp(const char* ssid,
   return "";
 }
 
-Hashtable<String, String> R4WifiManager::getUserConfig() {
-  if (this->status != WiFi.status()) {
+Hashtable<String, String>* R4WifiManager::getUserConfig() {
+  if (WiFi.status() != WL_IDLE_STATUS) {
     this->status = WiFi.status();
 
     if (this->status == WL_AP_CONNECTED) {
@@ -51,9 +51,9 @@ void R4WifiManager::printStatus() {
   Serial.println(ip);
 }
 
-Hashtable<String, String> R4WifiManager::handleClientRequest() {
+Hashtable<String, String>* R4WifiManager::handleClientRequest() {
   WiFiClient client = server.available();
-  Hashtable<String, String> userConfig;
+  Hashtable<String, String>* userConfig = nullptr;
   if (client) {
     Serial.println("New request");
     while (client.connected()) {
@@ -74,6 +74,7 @@ Hashtable<String, String> R4WifiManager::handleClientRequest() {
       if (firstLine.indexOf("GET /save") == 0) {
         userConfig = http.parseQueryString(firstLine);
         saved(client);
+        // TODO: Save to eeprom
       } else {
         Serial.println("Other page submitted");
         homepage(client);

@@ -15,7 +15,7 @@ class R4WifiManager {
    * characters
    * @param ip - IP address in which the AP will listen
    *
-   * @return 0 if there were no errors. 1 if there was an error
+   * @return String with an error message, if there were errors. Empty string if no errors
    */
   String startAp(const char* ssid, const char* pass, const IPAddress ip);
 
@@ -24,8 +24,10 @@ class R4WifiManager {
    * returns it immediately. If there is no user configuration, it will listen
    * for connections until the configuration is set. Once the configuration is
    * set, it returns that configuration
+   *
+   * @return can return nullptr if the configuration can't be retrieved
    */
-  Hashtable<String, String> getUserConfig();
+  Hashtable<String, String>* getUserConfig();
 
  private:
   int status = WL_IDLE_STATUS;
@@ -33,7 +35,7 @@ class R4WifiManager {
   HttpIno http;
 
   void printStatus();
-  Hashtable<String, String> handleClientRequest();
+  Hashtable<String, String>* handleClientRequest();
   String readLine(WiFiClient client);
   void homepage(WiFiClient& client);
   void saved(WiFiClient& client);
