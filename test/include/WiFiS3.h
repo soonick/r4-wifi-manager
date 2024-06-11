@@ -12,6 +12,8 @@ struct IPAddress {};
 
 class WiFiClient {
  public:
+  WiFiClient(String);
+
   explicit operator bool() const;
   bool available();
   bool connected();
@@ -20,14 +22,23 @@ class WiFiClient {
   void println(String);
   char read();
   void stop();
+
+ private:
+  String request;
+  uint currentCharPos = 0;
 };
 
 class WiFiServer {
  public:
   WiFiServer(int);
+  WiFiServer(int, WiFiClient*);
+  ~WiFiServer();
 
   WiFiClient available();
   void begin();
+
+ private:
+  WiFiClient* client = nullptr;
 };
 
 class HardwareWifi {

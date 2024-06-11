@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef HOST
-#define substring(...) substr(__VA_ARGS__)
+#define substring(start, end) substr(start, (end - start))
 #define indexOf(...) find(__VA_ARGS__)
 #define isEmpty(...) empty(__VA_ARGS__)
 #endif

@@ -2,6 +2,18 @@
 
 #include <string.h>
 
+R4WifiManager::R4WifiManager(WiFiServer* s) {
+  server = s;
+}
+
+R4WifiManager::R4WifiManager() {
+  R4WifiManager(new WiFiServer(80));
+}
+
+R4WifiManager::~R4WifiManager() {
+  delete server;
+}
+
 String R4WifiManager::startAp(const char* ssid,
                               const char* pass,
                               const IPAddress ip) {
@@ -21,7 +33,7 @@ String R4WifiManager::startAp(const char* ssid,
 
   // wait 5 seconds for connection:
   delay(5000);
-  this->server.begin();
+  this->server->begin();
   this->printStatus();
 
   return "";
@@ -52,18 +64,18 @@ void R4WifiManager::printStatus() {
 }
 
 Hashtable<String, String>* R4WifiManager::handleClientRequest() {
-  WiFiClient client = server.available();
+  WiFiClient client = server->available();
   Hashtable<String, String>* userConfig = nullptr;
   if (client) {
     Serial.println("New request");
     while (client.connected()) {
-      String firstLine = readLine(client);
+      String firstLine = readLine(&client);
       // Read until the request ends
       String currentLine = firstLine;
       String previousLine = "";
       while (true) {
         previousLine = currentLine;
-        currentLine = readLine(client);
+        currentLine = readLine(&client);
 
         // Two empty lines, means the request finished
         if (currentLine.isEmpty() && previousLine.isEmpty()) {
@@ -73,8 +85,15 @@ Hashtable<String, String>* R4WifiManager::handleClientRequest() {
 
       if (firstLine.indexOf("GET /save") == 0) {
         userConfig = http.parseQueryString(firstLine);
-        saved(client);
-        // TODO: Save to eeprom
+
+        if (isConfigValid(*userConfig)) {
+          // TODO: Save to eeprom
+          saved(client);
+        } else {
+          delete userConfig;
+          userConfig = nullptr;
+          homepage(client);
+        }
       } else {
         Serial.println("Other page submitted");
         homepage(client);
@@ -88,10 +107,15 @@ Hashtable<String, String>* R4WifiManager::handleClientRequest() {
   return userConfig;
 }
 
-String R4WifiManager::readLine(WiFiClient client) {
+bool R4WifiManager::isConfigValid(const Hashtable<String, String>& config) {
+  return config.containsKey(NETWORK_KEY) && config.containsKey(PASSWORD_KEY) &&
+         config.containsKey(DEVICE_ID_KEY);
+}
+
+String R4WifiManager::readLine(WiFiClient* client) {
   String line = "";
-  while (client.available()) {
-    char c = client.read();
+  while (client->available()) {
+    char c = client->read();
     if (c == '\n') {
       return line;
     } else if (c != '\r') {
@@ -108,21 +132,16 @@ void R4WifiManager::homepage(WiFiClient& client) {
   // better way to do this
   String homepage =
       "<!DOCTYPE html> <html> <body> <meta name='viewport' "
-      "content='width=device-width, initial-scale=1.0'> <script> function "
-      "addVariable() { var div = document.createElement('div'); "
-      "div.classList.add('c'); div.innerHTML = '<div class=\"f\"><label "
-      "class=\"l\">Name:</label> <input name=\"name\" class=\"t\"></div><div "
-      "class=\"f\"><label class=\"l\">Value:</label> <input name=\"value\" "
-      "class=\"t\"></div>'; document.getElementById('fs').appendChild(div); } "
-      "</script> <style> .f { display: block; float: left; } .c { overflow: "
-      "auto; border-bottom: 1px solid #000; padding-bottom: 5px; } .l, .t { "
-      "margin-right: 2px; } .t { width: 150px; } </style> <h1>Set "
-      "variables</h1> <form action='/save'> <div id='fs'> <div class='c'> <div "
-      "class='f'> <label class='l'>Name:</label> <input class='t' name='name'> "
-      "</div> <div class='f'> <label class='l'>Value:</label> <input class='t' "
-      "name='value'> </div> </div> </div> <div style='margin-top: 10px'> "
-      "<input type='button' value='Add another variable' "
-      "onClick='addVariable()'> <input type='submit' value='Submit'> </div> "
+      "content='width=device-width, initial-scale=1.0'> <style> .f { display: "
+      "block; float: left; } .c { overflow: auto; border-bottom: 1px solid "
+      "#000; padding-bottom: 5px; } .l, .t { margin-right: 2px; } .t { width: "
+      "150px; } </style> <h1>Configure device</h1> <form action='/save'> <div "
+      "id='fs'> <div class='c'> <div class='f'> <label class='l'>Wifi "
+      "Network:</label> <input class='t' name='network'> </div> <div "
+      "class='f'> <label class='l'>Wifi Password:</label> <input class='t' "
+      "name='password'> </div> <div class='f'> <label class='l'>Device "
+      "key:</label> <input class='t' name='key'> </div> </div> </div> <div "
+      "style='margin-top: 10px'> <input type='submit' value='Submit'> </div> "
       "</form> </body> </html>";
   http.renderHtml(client, homepage);
 }

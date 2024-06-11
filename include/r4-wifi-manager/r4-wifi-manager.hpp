@@ -7,6 +7,25 @@
 
 class R4WifiManager {
  public:
+   inline static const String NETWORK_KEY = "network";
+   inline static const String PASSWORD_KEY = "password";
+   inline static const String DEVICE_ID_KEY = "key";
+
+   /**
+    * Start the access point with the given server
+    */
+   R4WifiManager(WiFiServer* server);
+
+   /**
+    * Default constructor will create a new server listening on port 80
+    */
+   R4WifiManager();
+
+  /**
+   * Clean dynamically allocated memory
+   */
+  ~R4WifiManager();
+
   /**
    * Starts an access point
    *
@@ -31,12 +50,13 @@ class R4WifiManager {
 
  private:
   int status = WL_IDLE_STATUS;
-  WiFiServer server = WiFiServer(80);
+  WiFiServer* server = nullptr;
   HttpIno http;
 
   void printStatus();
   Hashtable<String, String>* handleClientRequest();
-  String readLine(WiFiClient client);
+  String readLine(WiFiClient* client);
   void homepage(WiFiClient& client);
   void saved(WiFiClient& client);
+  bool isConfigValid(const Hashtable<String, String>& config);
 };
