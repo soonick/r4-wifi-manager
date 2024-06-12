@@ -1,9 +1,12 @@
 [submodule "deps/ArduinoHashtable"]
 	path = deps/ArduinoHashtable
-	url = https://github.com/braydenanderson2014/ArduinoHashtable.git
+	url = https://github.com/soonick/ArduinoHashtable.git
 [submodule "deps/httpino"]
 	path = deps/httpino
 	url = https://github.com/soonick/httpino.git
 [submodule "test/external/SimpleVector"]
 	path = test/external/SimpleVector
-	url = https://github.com/braydenanderson2014/SimpleVector.git
+	url = https://github.com/soonick/SimpleVector.git
+[submodule "deps/CRC"]
+	path = deps/CRC
+	url = https://github.com/RobTillaart/CRC.git

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "r4-wifi-manager/eeprom-storage.hpp"
 #include <Arduino.h>
 #include <Hashtable.h>
 #include <WiFiS3.h>
@@ -7,10 +8,6 @@
 
 class R4WifiManager {
  public:
-   inline static const String NETWORK_KEY = "network";
-   inline static const String PASSWORD_KEY = "password";
-   inline static const String DEVICE_ID_KEY = "key";
-
    /**
     * Start the access point with the given server
     */
@@ -52,6 +49,7 @@ class R4WifiManager {
   int status = WL_IDLE_STATUS;
   WiFiServer* server = nullptr;
   HttpIno http;
+  EepromStorage eeprom;
 
   void printStatus();
   Hashtable<String, String>* handleClientRequest();

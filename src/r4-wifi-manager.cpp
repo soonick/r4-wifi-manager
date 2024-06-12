@@ -1,4 +1,5 @@
 #include "r4-wifi-manager/r4-wifi-manager.hpp"
+#include "r4-wifi-manager/constants.hpp"
 
 #include <string.h>
 
@@ -87,7 +88,7 @@ Hashtable<String, String>* R4WifiManager::handleClientRequest() {
         userConfig = http.parseQueryString(firstLine);
 
         if (isConfigValid(*userConfig)) {
-          // TODO: Save to eeprom
+          eeprom.update(*userConfig);
           saved(client);
         } else {
           delete userConfig;
@@ -108,8 +109,9 @@ Hashtable<String, String>* R4WifiManager::handleClientRequest() {
 }
 
 bool R4WifiManager::isConfigValid(const Hashtable<String, String>& config) {
-  return config.containsKey(NETWORK_KEY) && config.containsKey(PASSWORD_KEY) &&
-         config.containsKey(DEVICE_ID_KEY);
+  return config.containsKey(R4WifiManagerConstants::NETWORK_KEY) &&
+         config.containsKey(R4WifiManagerConstants::PASSWORD_KEY) &&
+         config.containsKey(R4WifiManagerConstants::DEVICE_ID_KEY);
 }
 
 String R4WifiManager::readLine(WiFiClient* client) {
