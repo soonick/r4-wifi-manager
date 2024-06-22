@@ -73,10 +73,11 @@ EepromStorage::Payload::Payload() {
   }
 
   // Get the payload for the eeprom
-  payloadLength = zeroPositions[2] + 1 - R4WifiManagerConstants::PAYLOAD_POSITION;
+  payloadLength =
+      zeroPositions[2] + 1 - R4WifiManagerConstants::PAYLOAD_POSITION;
   payload = new char[payloadLength];
-  for (unsigned long i = R4WifiManagerConstants::PAYLOAD_POSITION; i < payloadLength + R4WifiManagerConstants::PAYLOAD_POSITION;
-       i++) {
+  for (unsigned long i = R4WifiManagerConstants::PAYLOAD_POSITION;
+       i < payloadLength + R4WifiManagerConstants::PAYLOAD_POSITION; i++) {
     payload[i - R4WifiManagerConstants::PAYLOAD_POSITION] = EEPROM.read(i);
   }
 
