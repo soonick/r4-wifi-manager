@@ -26,9 +26,9 @@ String EepromStorage::update(const Hashtable<String, String>& data) {
     return "Data too large for EEPROM";
   }
 
-  EEPROM.put(crc, CRC_POSITION);
+  EEPROM.put(crc, R4WifiManagerConstants::CRC_POSITION);
   for (unsigned long i = 0; i < payload.getSize(); i++) {
-    EEPROM.put(payloadChars[i], PAYLOAD_POSITION + i);
+    EEPROM.put(payloadChars[i], R4WifiManagerConstants::PAYLOAD_POSITION + i);
   }
 
   return "";
@@ -57,7 +57,7 @@ EepromStorage::Payload::Payload() {
   const int eepromSize = EEPROM.length();
   int zeroPositions[3] = {0, 0, 0};
   int zerosCount = 0;
-  for (int i = PAYLOAD_POSITION; i < eepromSize; i++) {
+  for (int i = R4WifiManagerConstants::PAYLOAD_POSITION; i < eepromSize; i++) {
     const char currentChar = EEPROM.read(i);
     if (currentChar == 0) {
       zeroPositions[zerosCount] = i;
@@ -73,16 +73,16 @@ EepromStorage::Payload::Payload() {
   }
 
   // Get the payload for the eeprom
-  payloadLength = zeroPositions[2] + 1 - PAYLOAD_POSITION;
+  payloadLength = zeroPositions[2] + 1 - R4WifiManagerConstants::PAYLOAD_POSITION;
   payload = new char[payloadLength];
-  for (unsigned long i = PAYLOAD_POSITION; i < payloadLength + PAYLOAD_POSITION;
+  for (unsigned long i = R4WifiManagerConstants::PAYLOAD_POSITION; i < payloadLength + R4WifiManagerConstants::PAYLOAD_POSITION;
        i++) {
-    payload[i - PAYLOAD_POSITION] = EEPROM.read(i);
+    payload[i - R4WifiManagerConstants::PAYLOAD_POSITION] = EEPROM.read(i);
   }
 
   // If CRC is different, it means the data was corrupted or the eeprom was
   // empty
-  if (EEPROM.read(CRC_POSITION) !=
+  if (EEPROM.read(R4WifiManagerConstants::CRC_POSITION) !=
       calcCRC8((const uint8_t*)payload, payloadLength)) {
     delete[] payload;
     payload = nullptr;

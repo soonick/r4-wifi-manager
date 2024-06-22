@@ -61,8 +61,5 @@ class EepromStorage {
   };
 
  private:
-  static const int CRC_POSITION = 0;
-  static const int PAYLOAD_POSITION = 1;
-
   bool dataMatchesEeprom(const Hashtable<String, String>);
 };
