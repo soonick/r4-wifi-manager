@@ -4,15 +4,19 @@
 #include <string.h>
 
 R4WifiManager::R4WifiManager(WiFiServer* s) {
-  server = s;
+  construct(s);
 }
 
 R4WifiManager::R4WifiManager() {
-  R4WifiManager(new WiFiServer(80));
+  construct(new WiFiServer(80));
 }
 
 R4WifiManager::~R4WifiManager() {
   delete server;
+}
+
+void R4WifiManager::construct(WiFiServer* s) {
+  server = s;
 }
 
 String R4WifiManager::startAp(const char* ssid,
@@ -40,15 +44,10 @@ String R4WifiManager::startAp(const char* ssid,
   return "";
 }
 
-Hashtable<String, String>* R4WifiManager::getUserConfig() {
-  if (WiFi.status() != WL_IDLE_STATUS) {
-    this->status = WiFi.status();
-
-    if (this->status == WL_AP_CONNECTED) {
-      Serial.println("Devices connected to AP");
-    } else {
-      Serial.println("No devices connected to AP");
-    }
+Hashtable<String, String> R4WifiManager::getUserConfig() {
+  Hashtable<String, String> currentConfig = eeprom.get();
+  if (isConfigValid(currentConfig)) {
+    return currentConfig;
   }
 
   return this->handleClientRequest();
@@ -64,9 +63,9 @@ void R4WifiManager::printStatus() {
   Serial.println(ip);
 }
 
-Hashtable<String, String>* R4WifiManager::handleClientRequest() {
+Hashtable<String, String> R4WifiManager::handleClientRequest() {
   WiFiClient client = server->available();
-  Hashtable<String, String>* userConfig = nullptr;
+  Hashtable<String, String> userConfig;
   if (client) {
     Serial.println("New request");
     while (client.connected()) {
@@ -87,16 +86,13 @@ Hashtable<String, String>* R4WifiManager::handleClientRequest() {
       if (firstLine.indexOf("GET /save") == 0) {
         userConfig = http.parseQueryString(firstLine);
 
-        if (isConfigValid(*userConfig)) {
-          eeprom.update(*userConfig);
+        if (isConfigValid(userConfig)) {
+          eeprom.update(userConfig);
           saved(client);
         } else {
-          delete userConfig;
-          userConfig = nullptr;
           homepage(client);
         }
       } else {
-        Serial.println("Other page submitted");
         homepage(client);
       }
       client.stop();

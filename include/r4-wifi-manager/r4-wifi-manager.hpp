@@ -41,9 +41,9 @@ class R4WifiManager {
    * for connections until the configuration is set. Once the configuration is
    * set, it returns that configuration
    *
-   * @return can return nullptr if the configuration can't be retrieved
+   * @return Returns an empty hashtable if the configuration couldn't be retrieved
    */
-  Hashtable<String, String>* getUserConfig();
+  Hashtable<String, String> getUserConfig();
 
  private:
   int status = WL_IDLE_STATUS;
@@ -51,8 +51,9 @@ class R4WifiManager {
   HttpIno http;
   EepromStorage eeprom;
 
+  void construct(WiFiServer* server);
   void printStatus();
-  Hashtable<String, String>* handleClientRequest();
+  Hashtable<String, String> handleClientRequest();
   String readLine(WiFiClient* client);
   void homepage(WiFiClient& client);
   void saved(WiFiClient& client);
