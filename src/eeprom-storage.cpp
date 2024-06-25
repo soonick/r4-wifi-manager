@@ -6,8 +6,12 @@
 #include "CRC.h"
 #include "r4-wifi-manager/constants.hpp"
 
+EepromStorage::EepromStorage() : eeprom{EEPROM} {}
+
+EepromStorage::EepromStorage(EEPROMClass& e) : eeprom{e} {}
+
 Hashtable<String, String> EepromStorage::get() {
-  Payload payload;
+  Payload payload(eeprom);
   return payload.getHashtable();
 }
 
@@ -16,19 +20,19 @@ String EepromStorage::update(const Hashtable<String, String>& data) {
     return "";
   }
 
-  const Payload payload = Payload(data);
+  const Payload payload = Payload(data, eeprom);
   char* payloadChars = payload.getData();
   const char crc = calcCRC8((const uint8_t*)payloadChars, payload.getSize());
 
-  const unsigned long eepromSize = EEPROM.length();
+  const unsigned long eepromSize = eeprom.length();
   // The 1 we are adding is for the CRC byte
   if (payload.getSize() + 1 > eepromSize) {
-    return "Data too large for EEPROM";
+    return "Data too large for eeprom";
   }
 
-  EEPROM.put(crc, R4WifiManagerConstants::CRC_POSITION);
+  eeprom.put(crc, R4WifiManagerConstants::CRC_POSITION);
   for (unsigned long i = 0; i < payload.getSize(); i++) {
-    EEPROM.put(payloadChars[i], R4WifiManagerConstants::PAYLOAD_POSITION + i);
+    eeprom.put(payloadChars[i], R4WifiManagerConstants::PAYLOAD_POSITION + i);
   }
 
   return "";
@@ -52,13 +56,13 @@ bool EepromStorage::dataMatchesEeprom(const Hashtable<String, String> data) {
          *data.get(R4WifiManagerConstants::DEVICE_ID_KEY) == *currentDeviceId;
 }
 
-EepromStorage::Payload::Payload() {
+EepromStorage::Payload::Payload(EEPROMClass& e) : eeprom{e} {
   // Figure out the null terminators for the 3 sections
-  const int eepromSize = EEPROM.length();
+  const int eepromSize = eeprom.length();
   int zeroPositions[3] = {0, 0, 0};
   int zerosCount = 0;
   for (int i = R4WifiManagerConstants::PAYLOAD_POSITION; i < eepromSize; i++) {
-    const char currentChar = EEPROM.read(i);
+    const char currentChar = eeprom.read(i);
     if (currentChar == 0) {
       zeroPositions[zerosCount] = i;
       zerosCount++;
@@ -78,12 +82,12 @@ EepromStorage::Payload::Payload() {
   payload = new char[payloadLength];
   for (unsigned long i = R4WifiManagerConstants::PAYLOAD_POSITION;
        i < payloadLength + R4WifiManagerConstants::PAYLOAD_POSITION; i++) {
-    payload[i - R4WifiManagerConstants::PAYLOAD_POSITION] = EEPROM.read(i);
+    payload[i - R4WifiManagerConstants::PAYLOAD_POSITION] = eeprom.read(i);
   }
 
   // If CRC is different, it means the data was corrupted or the eeprom was
   // empty
-  if (EEPROM.read(R4WifiManagerConstants::CRC_POSITION) !=
+  if (eeprom.read(R4WifiManagerConstants::CRC_POSITION) !=
       calcCRC8((const uint8_t*)payload, payloadLength)) {
     delete[] payload;
     payload = nullptr;
@@ -112,7 +116,9 @@ EepromStorage::Payload::Payload() {
   }
 }
 
-EepromStorage::Payload::Payload(const Hashtable<String, String>& in) {
+EepromStorage::Payload::Payload(const Hashtable<String, String>& in,
+                                EEPROMClass& e)
+    : eeprom{e} {
   String* network = in.get(R4WifiManagerConstants::NETWORK_KEY);
   String* password = in.get(R4WifiManagerConstants::PASSWORD_KEY);
   String* key = in.get(R4WifiManagerConstants::DEVICE_ID_KEY);

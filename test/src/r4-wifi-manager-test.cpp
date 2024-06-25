@@ -34,8 +34,8 @@ TEST_CASE("getUserConfig") {
     String request = "GET /save\n\n";
     R4WifiManager wm =
         R4WifiManager(new WiFiServer(80, new WiFiClient(request)));
-    Hashtable<String, String>* actual = wm.getUserConfig();
-    REQUIRE(actual == nullptr);
+    Hashtable<String, String> actual = wm.getUserConfig();
+    REQUIRE(actual.elements() == 0);
   }
 
   SECTION("Returns data if submitted data is valid") {
@@ -43,10 +43,10 @@ TEST_CASE("getUserConfig") {
         "GET /save?network=mynetwork&password=secret&key=somesecret\n\n";
     R4WifiManager wm =
         R4WifiManager(new WiFiServer(80, new WiFiClient(request)));
-    Hashtable<String, String>* actual = wm.getUserConfig();
-    REQUIRE(actual->elements() == 3);
-    REQUIRE(*actual->get("network") == "mynetwork");
-    REQUIRE(*actual->get("password") == "secret");
-    REQUIRE(*actual->get("key") == "somesecret");
+    Hashtable<String, String> actual = wm.getUserConfig();
+    REQUIRE(actual.elements() == 3);
+    REQUIRE(*actual.get("network") == "mynetwork");
+    REQUIRE(*actual.get("password") == "secret");
+    REQUIRE(*actual.get("key") == "somesecret");
   }
 }

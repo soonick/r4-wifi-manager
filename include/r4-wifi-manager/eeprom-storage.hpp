@@ -1,5 +1,6 @@
 #pragma once
 
+#include "EEPROM.h"
 #include "Hashtable.h"
 #include <Arduino.h>
 
@@ -11,6 +12,16 @@
  */
 class EepromStorage {
  public:
+  /**
+   * Uses the global EEPROM as the eeprom storage
+   */
+  EepromStorage();
+
+  /**
+   * Uses given object as eeprom storage
+   */
+  EepromStorage(EEPROMClass &eeprom);
+
   /**
    * Updates data in eeprom (if the data is the same as the data currently in,
    * no writes are done)
@@ -30,8 +41,8 @@ class EepromStorage {
  protected:
   class Payload {
    public:
-    Payload();
-    Payload(const Hashtable<String, String>&);
+    Payload(EEPROMClass&);
+    Payload(const Hashtable<String, String>&, EEPROMClass&);
     ~Payload();
 
     unsigned long getSize() const;
@@ -47,6 +58,7 @@ class EepromStorage {
     char *payload = nullptr;
     unsigned long payloadLength = -1;
     Hashtable<String, String> hashtable;
+    EEPROMClass& eeprom;
 
     /**
      * Copies the given string to the given char array. A '\0' character will be
@@ -61,5 +73,8 @@ class EepromStorage {
   };
 
  private:
+  EEPROMClass& eeprom;
+
   bool dataMatchesEeprom(const Hashtable<String, String>);
+  void construct(const EEPROMClass &e);
 };

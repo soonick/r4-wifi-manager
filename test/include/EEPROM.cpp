@@ -1,20 +1,20 @@
 #include "EEPROM.h"
 
-int MyEeprom::length() {
+int EEPROMClass::length() {
   return EEPROM_SIZE;
 }
 
-char MyEeprom::read(int idx) {
+char EEPROMClass::read(int idx) {
   return eeprom[idx];
 }
 
-void MyEeprom::put(char c, int idx) {
+void EEPROMClass::put(char c, int idx) {
   numWrites++;
   eeprom[idx] = c;
 }
 
-unsigned int MyEeprom::getWritesPerformed() {
+unsigned int EEPROMClass::getWritesPerformed() {
   return numWrites;
 }
 
-MyEeprom EEPROM;
+EEPROMClass EEPROM;

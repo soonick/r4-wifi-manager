@@ -6,9 +6,10 @@
 #include "Hashtable.h"
 
 TEST_CASE("get") {
-  EepromStorage eeprom;
-
   SECTION("Returns empty hashtable if there is no data") {
+    EEPROMClass e;
+    EepromStorage eeprom(e);
+
     eeprom.get();
     const Hashtable<String, String> actual = eeprom.get();
     REQUIRE(actual.elements() == 0);
@@ -16,9 +17,10 @@ TEST_CASE("get") {
 }
 
 TEST_CASE("update") {
-  EepromStorage eeprom;
-
   SECTION("Sets data if it's different") {
+    EEPROMClass e;
+    EepromStorage eeprom(e);
+
     Hashtable<String, String> expected;
     expected.put(R4WifiManagerConstants::NETWORK_KEY, "my-network");
     expected.put(R4WifiManagerConstants::PASSWORD_KEY, "secret");
@@ -38,6 +40,9 @@ TEST_CASE("update") {
   }
 
   SECTION("Doesn't write to eeprom if data hasn't changed") {
+    EEPROMClass e;
+    EepromStorage eeprom(e);
+
     Hashtable<String, String> expected;
     expected.put(R4WifiManagerConstants::NETWORK_KEY, "my-network");
     expected.put(R4WifiManagerConstants::PASSWORD_KEY, "secret");

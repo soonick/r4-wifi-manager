@@ -1,6 +1,6 @@
 #pragma once
 
-class MyEeprom {
+class EEPROMClass {
  public:
   int length();
   char read(int idx);
@@ -13,4 +13,4 @@ class MyEeprom {
   unsigned long numWrites = 0;
 };
 
-extern MyEeprom EEPROM;
+extern EEPROMClass EEPROM;
