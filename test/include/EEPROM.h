@@ -4,7 +4,7 @@ class EEPROMClass {
  public:
   int length();
   char read(int idx);
-  void put(char c, int idx);
+  void update(int idx, char c);
   unsigned int getWritesPerformed();
 
  private:

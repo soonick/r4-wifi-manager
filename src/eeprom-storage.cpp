@@ -30,9 +30,10 @@ String EepromStorage::update(const Hashtable<String, String>& data) {
     return "Data too large for eeprom";
   }
 
-  eeprom.put(crc, R4WifiManagerConstants::CRC_POSITION);
+  eeprom.update(R4WifiManagerConstants::CRC_POSITION, crc);
   for (unsigned long i = 0; i < payload.getSize(); i++) {
-    eeprom.put(payloadChars[i], R4WifiManagerConstants::PAYLOAD_POSITION + i);
+    eeprom.update(R4WifiManagerConstants::PAYLOAD_POSITION + i,
+                  payloadChars[i]);
   }
 
   return "";

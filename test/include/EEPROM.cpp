@@ -8,7 +8,7 @@ char EEPROMClass::read(int idx) {
   return eeprom[idx];
 }
 
-void EEPROMClass::put(char c, int idx) {
+void EEPROMClass::update(int idx, char c) {
   numWrites++;
   eeprom[idx] = c;
 }
