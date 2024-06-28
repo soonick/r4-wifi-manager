@@ -39,6 +39,13 @@ String EepromStorage::update(const Hashtable<String, String>& data) {
   return "";
 }
 
+void EepromStorage::reset() {
+  eeprom.update(R4WifiManagerConstants::CRC_POSITION, 0);
+  eeprom.update(R4WifiManagerConstants::PAYLOAD_POSITION, 0);
+  eeprom.update(R4WifiManagerConstants::PAYLOAD_POSITION + 1, 0);
+  eeprom.update(R4WifiManagerConstants::PAYLOAD_POSITION + 2, 0);
+}
+
 bool EepromStorage::dataMatchesEeprom(const Hashtable<String, String> data) {
   Hashtable<String, String> current = get();
   const String* currentNetwork =

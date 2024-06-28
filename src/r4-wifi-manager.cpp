@@ -53,6 +53,10 @@ Hashtable<String, String> R4WifiManager::getUserConfig() {
   return this->handleClientRequest();
 }
 
+void R4WifiManager::reset() {
+  eeprom.reset();
+}
+
 void R4WifiManager::printStatus() {
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());

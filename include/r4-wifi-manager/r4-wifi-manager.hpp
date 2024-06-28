@@ -45,6 +45,11 @@ class R4WifiManager {
    */
   Hashtable<String, String> getUserConfig();
 
+  /**
+   * Resets the data in the eeprom so getUserConfig returns an empty hashtable
+   */
+  void reset();
+
  private:
   int status = WL_IDLE_STATUS;
   WiFiServer* server = nullptr;

@@ -38,6 +38,11 @@ class EepromStorage {
    */
   Hashtable<String, String> get();
 
+  /**
+   * Resets data in eeprom so `get` returns an empty hashtable
+   */
+  void reset();
+
  protected:
   class Payload {
    public:

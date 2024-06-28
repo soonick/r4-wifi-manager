@@ -56,3 +56,22 @@ TEST_CASE("update") {
     REQUIRE(writesBefore == EEPROM.getWritesPerformed());
   }
 }
+
+TEST_CASE("reset") {
+  SECTION("Calling reset makes `get` return empty") {
+    EEPROMClass e;
+    EepromStorage eeprom(e);
+
+    Hashtable<String, String> in;
+    in.put(R4WifiManagerConstants::NETWORK_KEY, "my-network");
+    in.put(R4WifiManagerConstants::PASSWORD_KEY, "secret");
+    in.put(R4WifiManagerConstants::DEVICE_ID_KEY, "abcdefgh-xxx-999900001");
+
+    String res = eeprom.update(in);
+    REQUIRE(res == "");
+
+    eeprom.reset();
+    const Hashtable<String, String> actual = eeprom.get();
+    REQUIRE(actual.elements() == 0);
+  }
+}
