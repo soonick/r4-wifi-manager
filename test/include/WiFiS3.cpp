@@ -68,8 +68,13 @@ int HardwareWifi::beginAP(String ssid, String) {
   }
   return WL_AP_LISTENING;
 }
+int HardwareWifi::begin(const char*, const char*) {
+  return 0;
+}
 int HardwareWifi::status() {
   return WL_AP_LISTENING;
 }
+void HardwareWifi::disconnect() {}
+void HardwareWifi::end() {}
 
 HardwareWifi WiFi;

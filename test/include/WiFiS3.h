@@ -6,6 +6,7 @@ enum {
   WL_IDLE_STATUS = 0,
   WL_AP_LISTENING = 1,
   WL_AP_CONNECTED = 2,
+  WL_CONNECTED = 3,
 };
 
 struct IPAddress {};
@@ -46,8 +47,11 @@ class HardwareWifi {
   IPAddress localIP();
   String SSID();
   int beginAP(String, String);
+  int begin(const char*, const char*);
   int status();
   void config(IPAddress);
+  void disconnect();
+  void end();
 };
 
 extern HardwareWifi WiFi;

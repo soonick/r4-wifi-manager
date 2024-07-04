@@ -26,6 +26,7 @@ String R4WifiManager::startAp(const char* ssid,
     return "Password must be 8 characters";
   }
 
+  disconnect();
   WiFi.config(ip);
 
   Serial.print("Creating access point named: ");
@@ -55,6 +56,20 @@ Hashtable<String, String> R4WifiManager::getUserConfig() {
 
 void R4WifiManager::reset() {
   eeprom.reset();
+  this->status = WL_IDLE_STATUS;
+}
+
+String R4WifiManager::connect(const String& network, const String& password) {
+  if (WiFi.begin(network.c_str(), password.c_str()) != WL_CONNECTED) {
+    return "Couldn't connect to network";
+  }
+
+  return "";
+}
+
+void R4WifiManager::disconnect() {
+  WiFi.disconnect();
+  WiFi.end();
 }
 
 void R4WifiManager::printStatus() {

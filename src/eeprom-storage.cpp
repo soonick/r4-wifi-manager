@@ -40,7 +40,7 @@ String EepromStorage::update(const Hashtable<String, String>& data) {
 }
 
 void EepromStorage::reset() {
-  eeprom.update(R4WifiManagerConstants::CRC_POSITION, 0);
+  eeprom.update(R4WifiManagerConstants::CRC_POSITION, 1);
   eeprom.update(R4WifiManagerConstants::PAYLOAD_POSITION, 0);
   eeprom.update(R4WifiManagerConstants::PAYLOAD_POSITION + 1, 0);
   eeprom.update(R4WifiManagerConstants::PAYLOAD_POSITION + 2, 0);

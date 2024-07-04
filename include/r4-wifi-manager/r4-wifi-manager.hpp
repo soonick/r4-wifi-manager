@@ -50,6 +50,21 @@ class R4WifiManager {
    */
   void reset();
 
+  /**
+   * Connects to the given network
+   *
+   * @param ssid - SSID to connect to
+   * @param pass - Passowrd for the network
+   *
+   * @return String with an error message, if there were errors. Empty string if no errors
+   */
+  String connect(const String& network, const String& password);
+
+  /**
+   * Disconnects from connected network. If in AP mode, it stops the AP
+   */
+  void disconnect();
+
  private:
   int status = WL_IDLE_STATUS;
   WiFiServer* server = nullptr;
